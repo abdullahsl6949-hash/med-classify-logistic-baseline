@@ -1,155 +1,178 @@
-# 🩺 Breast Cancer Detection: Logistic Regression Baseline
+# Breast Cancer Detection using Logistic Regression
 
-Building a high-recall classification system to detect malignancy using the Breast Cancer Wisconsin dataset.
+## Objective
+Build a clean machine learning baseline model to classify breast tumors as:
 
----
+- **0 = Malignant (Cancer)**
+- **1 = Benign (Healthy)**
 
-## 🎯 Objective
-
-The goal of this project is to establish a rigorous baseline for medical diagnosis.
-
-In clinical AI, the cost of a **False Negative** (missing a cancer case) is far more dangerous than a **False Positive**.
-
-This project focuses on:
-
-- Transitioning from regression into **Binary Classification**
-- Handling **Class Imbalance** in real-world medical datasets
-- Prioritizing **Recall** over raw Accuracy
+This project demonstrates a full medical classification pipeline using **Logistic Regression**.
 
 ---
 
-## 📊 Classification Task
+## What this project demonstrates
 
-The model predicts whether a tumor is:
-
-- **0 → Malignant (Cancerous)**
-- **1 → Benign (Healthy)**
-
-Unlike regression (predicting a number), this model predicts a **category**.
-
----
-
-## ## Dataset (Real Medical Data)
-
-We use the **Breast Cancer Wisconsin (Diagnostic) dataset** from `sklearn`.
-
-Dataset characteristics:
-
-- **569 patients**
-- **30 numeric tumor features**
-- Features describe size, shape, texture, and irregularities
-- Each patient has a known diagnosis (label)
-
-This is a **real-world medical dataset**, not synthetic data.
+- How Logistic Regression works for binary cancer prediction  
+- Why medical datasets require careful evaluation (not just accuracy)  
+- How feature scaling improves model performance  
+- How confusion matrices reveal real diagnostic errors  
+- Why threshold tuning matters in healthcare
 
 ---
 
-## ⚙️ Project Pipeline
-
-The workflow follows a standard medical ML baseline:
-
-- **Data Loading**  
-  Partitioning the dataset into Features ($X$) and Labels ($y$)
-
-- **Class Balance Check**  
-  Visualizing label distribution to detect imbalance bias
-
-- **Feature Correlation**  
-  Heatmap analysis to identify the strongest tumor predictors
-
-- **Stratified Train/Test Split**  
-  80/20 split using `stratify=y` to preserve class ratios
-
-- **Feature Scaling**  
-  Applying `StandardScaler` to ensure stable Gradient Descent convergence
-
-- **Model Training**  
-  Logistic Regression with `class_weight='balanced'`
-
-- **Threshold Optimization**  
-  Moving beyond the default `0.5` threshold to minimize False Negatives
-
-- **Evaluation**  
-  Confusion Matrix + Precision–Recall curve analysis
+## Workflow: Features → Model → Prediction
 
 ---
 
-## 🛠️ Key Technical Decisions
+## 1. Load Breast Cancer Dataset (Real Medical Data)
 
-### 1. Why StandardScaler?
+We use the built-in **Wisconsin Breast Cancer Dataset** from scikit-learn.
 
-Logistic Regression relies on Gradient Descent.
-
-Tumor features vary greatly:
-
-- Area can be **1000+**
-- Smoothness can be **< 0.1**
-
-Scaling is mandatory to prevent bias toward large-magnitude features.
+- 569 patient samples  
+- 30 diagnostic features  
+- Binary target (benign vs malignant)
 
 ---
 
-### 2. Handling Class Imbalance
+## 2. Class Balance Check (Medical Reality)
 
-The dataset is imbalanced (~37% Malignant).
+Medical datasets are often **imbalanced**.
 
-To correct this, the model uses:
+Class distribution:
 
-```python
-LogisticRegression(class_weight="balanced")
-This forces the model to pay more attention to the minority (Malignant) class.
+- Benign (Healthy): 357  
+- Malignant (Cancer): 212  
 
-3. Recall > Accuracy
-In medical AI:
+Why this matters:
 
-A 95% accuracy is meaningless if the remaining 5% are missed cancer cases.
+- A biased model may ignore the minority cancer class  
+- False negatives are dangerous in diagnosis  
 
-This project evaluates performance using:
+---
 
-Confusion Matrix
+## 3. Feature Correlation (Top Predictive Symptoms)
 
-Recall Score
+We visualize the most correlated features using a heatmap.
 
-Precision–Recall tradeoff
+This helps identify:
 
-Goal: Minimize False Negatives
+- Which tumor measurements contribute most to prediction  
+- Strong relationships between key medical features  
 
-📈 Visualizations
-The script automatically generates and saves graphs inside /graphs:
+---
 
-Class Distribution (Benign vs Malignant)
+## 4. Train–Test Split
 
-Correlation Heatmap (Top predictive features)
+We split the dataset into:
 
-Confusion Matrix (TP, TN, FP, FN breakdown)
+- 80% Training  
+- 20% Testing  
 
-🚀 How to Run
-Clone the repository:
+Using `stratify=y` to preserve class balance.
 
-bash
-Copy code
-git clone https://github.com/YourUsername/breast-cancer-detection.git
-Install dependencies:
+---
 
-bash
-Copy code
-pip install -r requirements.txt
-Run the script:
+## 5. Feature Scaling (Critical Step)
 
-bash
-Copy code
-python cancer_detection_logistic.py
-🏗️ Future Work: Neural Network (V2)
-This Logistic Regression model serves as the baseline.
+We apply **StandardScaler** because Logistic Regression is sensitive to feature magnitude.
 
-Next phase includes:
+Scaling ensures:
 
-Implementing a Deep Neural Network using TensorFlow/Keras
+- Faster convergence  
+- Fair contribution of all features  
 
-Comparing Recall and F1-score against this baseline
+---
 
-Testing whether Deep Learning reduces False Negatives significantly
+## 6. Logistic Regression Model (Baseline)
 
-Author
-Abdullah
-AI Engineering Student | Focused on Medical AI & Deep Learning
+We train a Logistic Regression classifier with:
+
+- `class_weight="balanced"` for medical fairness  
+- Increased iterations for stability  
+
+This provides a strong baseline before deep learning.
+
+---
+
+## 7. Prediction + Probabilities
+
+The model outputs:
+
+- Class predictions (0 or 1)  
+- Probability scores for threshold control  
+
+Probabilities are essential for ROC and threshold tuning.
+
+---
+
+## 8. Evaluation Metrics (What Matters in Healthcare)
+
+We evaluate using:
+
+- Accuracy  
+- Confusion Matrix  
+- Precision, Recall, F1-score  
+
+Because accuracy alone is not enough in cancer detection.
+
+---
+
+## 9. Confusion Matrix Heatmap (Error Analysis)
+
+The confusion matrix shows:
+
+- Correct benign predictions  
+- Correct malignant predictions  
+- False positives  
+- False negatives (most critical)
+
+---
+
+## 10. Precision–Recall Curve
+
+We plot Precision vs Recall to understand:
+
+- Sensitivity to cancer cases  
+- Tradeoff between missed cancer and false alarms  
+
+More useful than ROC in imbalanced medical data.
+
+---
+
+## 11. Threshold Experiment (Reducing False Negatives)
+
+Instead of default threshold = 0.5, we test:
+
+- Threshold = 0.3
+
+Goal:
+
+- Reduce missed cancer cases  
+- Increase recall for malignant detection  
+
+This is a realistic healthcare adjustment.
+
+---
+
+## Results Summary
+
+This project builds a complete medical ML classification baseline with:
+
+- Logistic Regression  
+- Proper preprocessing  
+- Strong evaluation  
+- Graph-based interpretability  
+- Threshold control for safety  
+
+---
+
+## Next Improvements
+
+- Add Neural Network model for comparison  
+- Hyperparameter tuning  
+- Cross-validation  
+- Deployment as a medical prediction app
+
+---
+
+📌 **Repo includes saved graphs inside `/images/` folder.**
